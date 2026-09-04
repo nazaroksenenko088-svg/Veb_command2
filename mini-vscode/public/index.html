@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#11161d"><title>Forgepad</title>
+  <style>
+    :root{--bg:#0d1117;--panel:#11161d;--soft:#161d26;--line:#27313d;--text:#dce5ee;--muted:#8190a0;--accent:#42d6a4;--orange:#ffb86b}
+    *{box-sizing:border-box}html,body{height:100%}body{margin:0;overflow:hidden;background:var(--bg);color:var(--text);font:13px/1.4 "SFMono-Regular",Consolas,"Liberation Mono",monospace}button{font:inherit;color:inherit;cursor:pointer}.app{display:grid;grid-template-rows:48px 1fr 25px;height:100%}
+    .topbar{display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid var(--line);background:var(--panel)}.brand{display:flex;align-items:center;gap:10px;letter-spacing:.08em;font-weight:700}.brand-mark{display:grid;place-items:center;width:25px;height:25px;color:#0d1117;background:var(--accent);font-weight:900}.brand small{color:var(--muted);font-size:10px;letter-spacing:.12em;font-weight:400}.top-actions{display:flex;gap:8px}.btn{border:1px solid var(--line);background:transparent;padding:6px 10px;border-radius:3px}.btn:hover{border-color:var(--accent);color:var(--accent)}.btn.run{border-color:var(--accent);color:var(--accent);background:rgba(66,214,164,.12)}
+    .workspace{min-height:0;display:grid;grid-template-columns:220px minmax(0,1fr) 42%}.sidebar{min-width:0;border-right:1px solid var(--line);background:var(--panel)}.side-title{padding:17px 15px 10px;color:var(--muted);font-size:11px;letter-spacing:.12em}.project{padding:7px 15px;color:var(--orange);font-weight:700}.file{display:flex;gap:9px;align-items:center;width:100%;border:0;border-left:2px solid transparent;padding:9px 15px 9px 22px;background:transparent;text-align:left}.file:hover,.file.active{background:var(--soft)}.file.active{border-left-color:var(--accent);color:var(--accent)}.file-icon{width:15px;color:var(--muted);text-align:center}.editor-pane,.preview-pane{min-width:0;display:flex;flex-direction:column;background:#0f141b}.tabs{display:flex;height:39px;border-bottom:1px solid var(--line);background:var(--panel)}.tab{display:flex;align-items:center;gap:8px;min-width:125px;border:0;border-right:1px solid var(--line);border-top:2px solid var(--accent);padding:0 13px;background:#0f141b}.tab-dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}#editor{flex:1;min-height:0}.preview-head{display:flex;justify-content:space-between;align-items:center;height:39px;padding:0 14px;border-bottom:1px solid var(--line);color:var(--muted)}.preview-head strong{color:var(--text);font-weight:400}.preview-frame{width:100%;height:100%;border:0;background:white}.statusbar{display:flex;justify-content:space-between;align-items:center;padding:0 12px;background:#163b35;color:#b5f6df;font-size:11px}.status-right{display:flex;gap:16px}.empty{display:grid;place-items:center;height:100%;color:var(--muted)}
+    .devtools{position:fixed;right:16px;bottom:40px;z-index:10;width:min(520px,calc(100% - 32px));height:240px;border:1px solid var(--line);background:#0b1016;box-shadow:0 12px 30px #0008;display:none;flex-direction:column}.devtools.open{display:flex}.devtools-head{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;border-bottom:1px solid var(--line);color:var(--muted)}.devtools-head strong{color:var(--text);font-weight:400}.console{flex:1;overflow:auto;padding:8px 12px;font-size:12px}.console-line{padding:3px 0;border-bottom:1px solid #1b242e;white-space:pre-wrap;word-break:break-word}.console-line.error{color:#ff817d}.console-line.info{color:#8bbcff}.devtools-input{display:flex;border-top:1px solid var(--line)}.devtools-input input{flex:1;min-width:0;border:0;padding:9px 12px;background:transparent;color:var(--text);outline:0;font:inherit}.devtools-input button{border:0;padding:0 12px;background:var(--soft)}.mobile-keys{display:none;gap:5px;overflow:auto;padding:6px;border-top:1px solid var(--line);background:var(--panel)}.mobile-keys button{flex:0 0 auto;border:1px solid var(--line);border-radius:3px;padding:7px 10px;background:var(--soft)}.mobile-keys button:active{background:var(--accent);color:#07110e}
+    @media(max-width:760px){.app{grid-template-rows:48px minmax(0,1fr) 25px auto}.workspace{grid-template-columns:52px minmax(0,1fr)}.sidebar{overflow:hidden}.side-title,.project,.file span:not(.file-icon){display:none}.file{justify-content:center;padding:12px 0}.preview-pane{display:none}.topbar{padding:0 10px}.brand small,.top-actions .btn:first-child{display:none}.mobile-keys{display:flex}.devtools{right:8px;bottom:87px;width:calc(100% - 16px)}}
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs/loader.min.js"></script>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar"><div class="brand"><span class="brand-mark">{ }</span><span>FORGEPAD <small>WEB LAB</small></span></div><div class="top-actions"><button class="btn" id="devtools-toggle">⌘ DevTools</button><button class="btn" id="reset">Сбросить</button><button class="btn run" id="run">▶ Запустить</button></div></header>
+    <main class="workspace">
+      <aside class="sidebar"><div class="side-title">ПРОЕКТ</div><div class="project">⌄ starter-site</div><button class="file active" data-file="index.html"><span class="file-icon">◇</span><span>index.html</span></button><button class="file" data-file="styles.css"><span class="file-icon">#</span><span>styles.css</span></button><button class="file" data-file="script.js"><span class="file-icon">JS</span><span>script.js</span></button></aside>
+      <section class="editor-pane"><nav class="tabs"><button class="tab"><span class="tab-dot"></span><span id="tab-name">index.html</span></button></nav><div id="editor"><div class="empty">Загрузка редактора...</div></div></section>
+      <section class="preview-pane"><div class="preview-head"><strong>ПРЕДПРОСМОТР</strong><span id="preview-state">готов</span></div><iframe class="preview-frame" title="Предпросмотр проекта" sandbox="allow-scripts"></iframe></section>
+    </main>
+    <footer class="statusbar"><span id="status">● Готово</span><span class="status-right"><span id="language">HTML</span><span>UTF-8</span><span id="position">Ln 1, Col 1</span></span></footer>
+    <div class="mobile-keys" aria-label="Клавиши редактора"><button data-key="Tab">Tab</button><button data-key="Control">Ctrl</button><button data-key="Escape">Esc</button><button data-text="{}">{}</button><button data-text="()">()</button><button data-text="[]">[]</button><button data-text=";">;</button><button data-key="ArrowLeft">←</button><button data-key="ArrowRight">→</button></div>
+  </div>
+  <section class="devtools" id="devtools" aria-label="Встроенная консоль"><div class="devtools-head"><strong>DEVTOOLS / CONSOLE</strong><button class="btn" id="clear-console">Очистить</button></div><div class="console" id="console"><div class="console-line info">Консоль готова. Запусти проект для проверки.</div></div><form class="devtools-input" id="console-form"><input id="console-input" autocomplete="off" placeholder="Выполнить JavaScript в preview"><button>Выполнить</button></form></section>
+  <script>
+    const defaults={'index.html':`<!doctype html>
+<html lang="ru">
+  <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Моя страница</title></head>
+  <body><main class="hero"><p class="eyebrow">STARTER SITE</p><h1>Привет, веб.</h1><p>Измени код слева и нажми «Запустить».</p><button onclick="this.textContent='Работает!'">Проверить</button></main></body>
+</html>`, 'styles.css':`body{margin:0;min-height:100vh;display:grid;place-items:center;background:#102a43;color:#f4f7fa;font-family:system-ui,sans-serif}.hero{text-align:center;padding:48px}.eyebrow{color:#42d6a4;letter-spacing:.2em}h1{font-size:clamp(2.5rem,8vw,6rem);margin:12px 0}button{padding:12px 20px;cursor:pointer}`, 'script.js':`const message="Редактор работает!";
+console.log(message);`};
+    let currentFile='index.html',editor;const models={};const lang=f=>f.endsWith('.css')?'css':f.endsWith('.js')?'javascript':'html';
+    require.config({paths:{vs:'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.52.2/min/vs'}});require(['vs/editor/editor.main'],()=>{editor=monaco.editor.create(document.getElementById('editor'),{value:defaults[currentFile],language:'html',theme:'vs-dark',automaticLayout:true,fontSize:14,minimap:{enabled:false},padding:{top:16},tabSize:2});models[currentFile]=editor.getModel();editor.onDidChangeCursorPosition(e=>document.getElementById('position').textContent=`Ln ${e.position.lineNumber}, Col ${e.position.column}`);updatePreview()});
+    function selectFile(file){if(!editor||file===currentFile)return;models[currentFile]=editor.getModel();if(!models[file])models[file]=monaco.editor.createModel(defaults[file],lang(file));editor.setModel(models[file]);currentFile=file;document.querySelectorAll('.file').forEach(x=>x.classList.toggle('active',x.dataset.file===file));document.getElementById('tab-name').textContent=file;document.getElementById('language').textContent=lang(file).toUpperCase()}
+    function updatePreview(){
+      if(!editor)return;
+      const html=models['index.html']?.getValue()||defaults['index.html'];
+      const css=models['styles.css']?.getValue()||defaults['styles.css'];
+      const js=models['script.js']?.getValue()||defaults['script.js'];
+      const scriptTag='scr'+'ipt';
+      const bridge="(function(){const oldLog=console.log;console.log=function(){parent.postMessage({type:'log',args:[...arguments].map(String).join(' ')},'*');oldLog.apply(console,arguments)};window.onerror=function(message){parent.postMessage({type:'error',args:[String(message)]},'*')};addEventListener('message',function(event){if(event.data&&event.data.type==='eval'){try{parent.postMessage({type:'log',args:[String(Function('return ('+event.data.code+')')())]},'*')}catch(error){parent.postMessage({type:'error',args:[error.message]},'*')}}})})()";
+      const preview=html.replace('</head>','<style>'+css+'</style></head>').replace('</body>','<'+scriptTag+'>'+bridge+js+'<'+('/'+scriptTag)+'> </body>');
+      document.querySelector('.preview-frame').srcdoc=preview;
+      document.getElementById('status'
+      
+      ).textContent='● Проект запущен';
+      document.getElementById('preview-state').textContent='обновлено';
+    }
+    function addConsole(text,type){const line=document.createElement('div');line.className='console-line '+(type||'');line.textContent=text;document.getElementById('console').appendChild(line);line.scrollIntoView()}
+    window.addEventListener('message',event=>{if(event.data?.type)addConsole(event.data.args,event.data.type)});
+    document.getElementById('devtools-toggle').addEventListener('click',()=>document.getElementById('devtools').classList.toggle('open'));
+    document.getElementById('clear-console').addEventListener('click',()=>document.getElementById('console').replaceChildren());
+    document.getElementById('console-form').addEventListener('submit',event=>{event.preventDefault();const input=document.getElementById('console-input');const code=input.value.trim();if(!code)return;addConsole('> '+code,'info');document.querySelector('.preview-frame').contentWindow.postMessage({type:'eval',code},'*');input.value='' });
+    document.querySelectorAll('.mobile-keys button').forEach(button=>button.addEventListener('click',()=>{if(!editor)return;editor.focus();if(button.dataset.text){editor.trigger('mobile','type',{text:button.dataset.text});return}editor.trigger('mobile','acceptSelectedSuggestion');editor.trigger('mobile',button.dataset.key,{})}));
+    document.querySelectorAll('.file').forEach(x=>x.addEventListener('click',()=>selectFile(x.dataset.file)));document.getElementById('run').addEventListener('click',updatePreview);document.getElementById('reset').addEventListener('click',()=>{Object.entries(defaults).forEach(([f,v])=>models[f]?.setValue(v));updatePreview()});
+  </script>
+</body>
+</html>
